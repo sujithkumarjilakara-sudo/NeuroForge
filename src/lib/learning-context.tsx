@@ -167,16 +167,18 @@ const LearningContext = createContext<LearningContextValue | null>(null);
 export function LearningProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<LearningState>(() => {
     if (typeof window === "undefined") return defaultState;
+
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) return JSON.parse(raw) as LearningState;
     } catch {
       /* ignore corrupt data */
     }
+
     return defaultState;
   });
 
-  // Persist on every change
+  // Persist every state change.
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);

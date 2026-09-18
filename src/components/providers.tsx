@@ -1,13 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 import { DemoProvider } from "@/lib/demo-context";
-import { LearningProvider } from "@/lib/learning-context";
 
-/**
- * All client-side context providers, composed in one place
- * so the root layout stays a server component.
- */
+const LearningProvider = dynamic(
+  () =>
+    import("@/lib/learning-context").then(
+      (mod) => mod.LearningProvider
+    ),
+  { ssr: false }
+);
+
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <DemoProvider>

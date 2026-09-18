@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLearning } from "@/lib/learning-context";
 import { getTutorIntro, getTutorResponse, TUTOR_MODES } from "@/data/tutor-content";
 import type { TutorMode } from "@/data/tutor-content";
+import ReactMarkdown from "react-markdown";
 import { generateTutorResponseAction } from "@/actions/ai-actions";
 
 type Message = {
@@ -114,7 +115,8 @@ export default function TutorPage() {
     }
 
     if (!tutorText) {
-      tutorText = `Here is a structured explanation of **${concept}**:\n\nRegarding your question: "${userText}", ${concept} plays a crucial role in the system architecture. Master this concept by reviewing core principles, working through sample problems in Practice, or testing yourself on Diagnostic questions!`;
+      tutorText =
+        "I couldn't generate an AI response from the uploaded study material. Please check that the Gemini API key is configured for this deployment and try again.";
     }
 
     setMessages((prev) => [...prev, { role: "tutor", content: tutorText }]);
@@ -150,7 +152,13 @@ export default function TutorPage() {
                     : "self-end ml-auto bg-white/10 text-zinc-100"
                 }`}
               >
-                {m.content}
+                {m.role === "tutor" ? (
+                  <div className="prose prose-invert prose-sm max-w-none">
+                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  m.content
+                )}
               </div>
             ))}
             {isLoading && (
